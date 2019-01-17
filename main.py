@@ -114,7 +114,7 @@ print(test_tags_y[0])
 model = Sequential()
 model.add(InputLayer(input_shape=(MAX_LENGTH,)))
 model.add(Embedding(len(word2index), 128))
-model.add(Bidirectional(LSTM(128, return_sequences=True)))
+model.add(Bidirectional(LSTM(256, return_sequences=True)))
 model.add(TimeDistributed(Dense(len(tag2index))))
 model.add(Activation('softmax'))
 
@@ -127,6 +127,6 @@ model.summary()
 
 categorical_tags_y = keras.utils.to_categorical(train_tags_y, len(tag2index))
 
-model.fit(train_sentences_X, keras.utils.to_categorical(train_tags_y, len(tag2index)), batch_size=128, epochs=5, validation_split=0.2)
+model.fit(train_sentences_X, keras.utils.to_categorical(train_tags_y, len(tag2index)), batch_size=128, epochs=40, validation_split=0.2)
 scores = model.evaluate(test_sentences_X, keras.utils.to_categorical(test_tags_y, len(tag2index)))
 print(f"{model.metrics_names[1]}: {scores[1] * 100}")

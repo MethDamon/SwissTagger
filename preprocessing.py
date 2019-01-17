@@ -22,12 +22,3 @@ def parse_xml_data():
                                  'verified': tag.attrib['verified'], 'word': tag.text}
                     sentences[sentence.attrib['n']]['words'].append(datapoint)
     return sentences
-
-
-s = parse_xml_data()
-print('Total number of sentences: %s' % len(s))
-words = []
-for sentence in s:
-    for word in s[sentence]['words']:
-        words.append(word)
-print('Total number of words: %s' % len(words))

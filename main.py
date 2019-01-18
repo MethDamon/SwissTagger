@@ -196,7 +196,7 @@ def logits_to_tokens(sequences, index):
 
         token_sequences.append(token_sequence)
 
-    return filter(lambda a: a != tag2index['-PAD-'], token_sequences)
+    return list(filter(lambda a: a != tag2index['-PAD-'], token_sequences))
 
 
 test_samples_X = pad_sequences(test_samples_X, maxlen=MAX_LENGTH, padding='post')

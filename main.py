@@ -193,7 +193,7 @@ def plot_history(history):
     plt.xlabel('Epochs')
     plt.ylabel('Accuracy')
     plt.legend()
-    plt.show()
+    return plt
 
 
 model = Sequential()
@@ -218,4 +218,5 @@ for i, name in enumerate(model.metrics_names):
     print("%s: %s" % (name, 100 * scores[i]))
 
 
-plot_history(history)
+plt = plot_history(history)
+plt.show()

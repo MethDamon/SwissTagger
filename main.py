@@ -8,7 +8,7 @@ from keras.preprocessing.sequence import pad_sequences
 
 import preprocessing as prepr
 
-test_size = 0.2
+test_size = 0.1
 
 data = prepr.parse_xml_data()
 

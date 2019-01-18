@@ -9,6 +9,7 @@ def select_files_in_folder(directory, ext):
 
 
 def parse_xml_data():
+    articles = []
     sentences = {}
     for file in select_files_in_folder('data', 'xml'):
         tree = ET.parse(file)
@@ -21,4 +22,5 @@ def parse_xml_data():
                     datapoint = {'n': tag.attrib['n'], 'pos': tag.attrib['pos'],
                                  'verified': tag.attrib['verified'], 'word': tag.text}
                     sentences[sentence.attrib['n']]['words'].append(datapoint)
-    return sentences
+            articles.append(sentences)
+    return articles

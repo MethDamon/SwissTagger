@@ -7,23 +7,44 @@ from keras.layers import Dense, LSTM, InputLayer, Bidirectional, TimeDistributed
 from keras.optimizers import Adam
 import keras.utils
 
+test_size = 0.2
+
 data = prepr.parse_xml_data()
 
-sentences = []
-sentence_tags = []
-for sentence in data:
-    words = []
-    tags = []
-    for word in data[sentence]['words']:
-        words.append(word['word'])
-        tags.append(word['pos'])
-    sentences.append(np.array(words))
-    sentence_tags.append(np.array(tags))
+# Split
+n_of_articles = len(data)
+n_of_test_articles = int(n_of_articles * test_size)
+test_articles = data[(n_of_articles - n_of_test_articles):]
+train_articles = data[:(n_of_articles - n_of_test_articles)]
 
-(train_sentences,
- test_sentences,
- train_tags,
- test_tags) = train_test_split(sentences, sentence_tags, test_size=0.2)
+
+train_sentences = []
+test_sentences = []
+train_tags = []
+test_tags = []
+
+
+for article in train_articles:
+    for sentence in article:
+        words = []
+        tags = []
+        for word in article[sentence]['words']:
+            words.append(word['word'])
+            tags.append(word['pos'])
+        train_sentences.append(np.array(words))
+        train_tags.append(np.array(tags))
+        
+        
+for article in test_articles:
+    for sentence in article:
+        words = []
+        tags = []
+        for word in article[sentence]['words']:
+            words.append(word['word'])
+            tags.append(word['pos'])
+        test_sentences.append(np.array(words))
+        test_tags.append(np.array(tags))
+
 
 print('Training sentences:')
 print(train_sentences[0])
@@ -38,7 +59,9 @@ print('Testing tags')
 print(test_tags[0])
 print('Length of testing tags: %d' % len(test_tags))
 
+
 unique_words, unique_tags = set([]), set([])
+
 
 for s in train_sentences:
     for w in s:

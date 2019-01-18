@@ -214,14 +214,14 @@ model.summary()
 categorical_tags_y = keras.utils.to_categorical(train_tags_y, len(tag2index))
 
 history = model.fit(train_sentences_X, keras.utils.to_categorical(train_tags_y, len(tag2index)), batch_size=128,
-                    epochs=60, validation_split=0.2)
+                    epochs=1, validation_split=0.2)
 scores = model.evaluate(test_sentences_X, keras.utils.to_categorical(test_tags_y, len(tag2index)))
 for i, name in enumerate(model.metrics_names):
     print("%s: %s" % (name, 100 * scores[i]))
 
 test_samples = [
-    "Ich bin scho recht gspannt was passiert.".split(),
-    "Mer hend jetzt es Model trainiert und es isch ziemli guet worde".split()
+    "Ich bin scho recht gspannt was passiert.\n".split(),
+    "Mer hend jetzt es Model trainiert und es isch ziemli guet worde.\n".split()
 ]
 print(test_samples)
 
@@ -235,7 +235,6 @@ for s in test_samples:
             s_int.append(word2index['-OOV-'])
     test_samples_X.append(s_int)
 
-test_samples_X = pad_sequences(test_samples_X, maxlen=MAX_LENGTH, padding='post')
 print(test_samples_X)
 
 
@@ -248,10 +247,11 @@ def logits_to_tokens(sequences, index):
 
         token_sequences.append(token_sequence)
 
-    return token_sequences
+    return filter(lambda a: a != tag2index['-PAD-'], token_sequences)
 
+
+test_samples_X = pad_sequences(test_samples_X, maxlen=MAX_LENGTH, padding='post')
 
 predictions = model.predict(test_samples_X)
-
 
 print(logits_to_tokens(predictions, {i: t for t, i in tag2index.items()}))

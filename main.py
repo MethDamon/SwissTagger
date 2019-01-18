@@ -219,3 +219,39 @@ scores = model.evaluate(test_sentences_X, keras.utils.to_categorical(test_tags_y
 for i, name in enumerate(model.metrics_names):
     print("%s: %s" % (name, 100 * scores[i]))
 
+test_samples = [
+    "Ich bin scho recht gspannt was passiert.".split(),
+    "Mer hend jetzt es Model trainiert und es isch ziemli guet worde".split()
+]
+print(test_samples)
+
+test_samples_X = []
+for s in test_samples:
+    s_int = []
+    for w in s:
+        try:
+            s_int.append(word2index[w.lower()])
+        except KeyError:
+            s_int.append(word2index['-OOV-'])
+    test_samples_X.append(s_int)
+
+test_samples_X = pad_sequences(test_samples_X, maxlen=MAX_LENGTH, padding='post')
+print(test_samples_X)
+
+
+def logits_to_tokens(sequences, index):
+    token_sequences = []
+    for categorical_sequence in sequences:
+        token_sequence = []
+        for categorical in categorical_sequence:
+            token_sequence.append(index[np.argmax(categorical)])
+
+        token_sequences.append(token_sequence)
+
+    return token_sequences
+
+
+predictions = model.predict(test_samples_X)
+
+
+print(logits_to_tokens(predictions, {i: t for t, i in tag2index.items()}))

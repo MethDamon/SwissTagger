@@ -187,9 +187,6 @@ for s in test_samples:
     test_samples_X.append(s_int)
 
 
-test_samples_X = pad_sequences(test_samples_X, maxlen=MAX_LENGTH, padding='post')
-
-
 def logits_to_tokens(sequences, index):
     token_sequences = []
     for categorical_sequence in sequences:
@@ -202,6 +199,11 @@ def logits_to_tokens(sequences, index):
     return token_sequences
 
 
+test_samples_X = pad_sequences(test_samples_X, maxlen=MAX_LENGTH, padding='post')
+
 predictions = model.predict(test_samples_X)
 
-print(logits_to_tokens(predictions, {i: t for t, i in tag2index.items()}))
+for idx, sen in enumerate(test_samples):
+    print(sen)
+    print('\n')
+    print(logits_to_tokens(predictions[idx], {i: t for t, i in tag2index.items()}))

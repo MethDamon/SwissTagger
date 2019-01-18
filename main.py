@@ -1,6 +1,4 @@
 import keras.utils
-
-import matplotlib.pyplot as plt
 import numpy as np
 from keras import backend as K
 from keras.layers import Dense
@@ -151,52 +149,6 @@ def ignore_class_accuracy(to_ignore=0):
 
     return ignore_accuracy
 
-
-def plot_history(history):
-    loss_list = [s for s in history.history.keys() if 'loss' in s and 'val' not in s]
-    val_loss_list = [s for s in history.history.keys() if 'loss' in s and 'val' in s]
-    acc_list = [s for s in history.history.keys() if 'acc' in s and 'val' not in s]
-    val_acc_list = [s for s in history.history.keys() if 'acc' in s and 'val' in s]
-
-    if len(loss_list) == 0:
-        print('Loss is missing in history')
-        return
-
-        ## As loss always exists
-    epochs = range(1, len(history.history[loss_list[0]]) + 1)
-
-    ## Loss
-    plt.figure(1)
-    for l in loss_list:
-        plt.plot(epochs, history.history[l], 'b',
-                 label='Training loss (' + str(str(format(history.history[l][-1], '.5f')) + ')'))
-    for l in val_loss_list:
-        plt.plot(epochs, history.history[l], 'g',
-                 label='Validation loss (' + str(str(format(history.history[l][-1], '.5f')) + ')'))
-
-    plt.title('Loss')
-    plt.xlabel('Epochs')
-    plt.ylabel('Loss')
-    plt.legend()
-
-    ## Accuracy
-    plt.figure(2)
-    for l in acc_list:
-        plt.plot(epochs, history.history[l], 'b',
-                 label='Training accuracy (' + str(format(history.history[l][-1], '.5f')) + ')')
-    for l in val_acc_list:
-        plt.plot(epochs, history.history[l], 'g',
-                 label='Validation accuracy (' + str(format(history.history[l][-1], '.5f')) + ')')
-
-    plt.plot()
-
-    plt.title('Accuracy')
-    plt.xlabel('Epochs')
-    plt.ylabel('Accuracy')
-    plt.legend()
-    return plt
-
-
 model = Sequential()
 model.add(InputLayer(input_shape=(MAX_LENGTH,)))
 model.add(Embedding(len(word2index), 128))
@@ -220,10 +172,9 @@ for i, name in enumerate(model.metrics_names):
     print("%s: %s" % (name, 100 * scores[i]))
 
 test_samples = [
-    "Ich bin scho recht gspannt was passiert.\n".split(),
-    "Mer hend jetzt es Model trainiert und es isch ziemli guet worde.\n".split()
+    "Ich bin scho recht gspannt was passiert".split(),
+    "Mer hend jetzt es Model trainiert und es isch ziemli guet worde.".split()
 ]
-print(test_samples)
 
 test_samples_X = []
 for s in test_samples:
@@ -234,8 +185,6 @@ for s in test_samples:
         except KeyError:
             s_int.append(word2index['-OOV-'])
     test_samples_X.append(s_int)
-
-print(test_samples_X)
 
 
 def logits_to_tokens(sequences, index):
@@ -254,4 +203,7 @@ test_samples_X = pad_sequences(test_samples_X, maxlen=MAX_LENGTH, padding='post'
 
 predictions = model.predict(test_samples_X)
 
-print(logits_to_tokens(predictions, {i: t for t, i in tag2index.items()}))
+for idx, sen in enumerate(test_samples):
+    print(sen)
+    print('\n')
+    print(logits_to_tokens(predictions[idx], {i: t for t, i in tag2index.items()}))

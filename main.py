@@ -187,6 +187,8 @@ def plot_history(history):
         plt.plot(epochs, history.history[l], 'g',
                  label='Validation accuracy (' + str(format(history.history[l][-1], '.5f')) + ')')
 
+    plt.plot()
+
     plt.title('Accuracy')
     plt.xlabel('Epochs')
     plt.ylabel('Accuracy')

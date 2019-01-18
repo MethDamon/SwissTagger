@@ -1,11 +1,12 @@
-import preprocessing as prepr
-import numpy as np
-from sklearn.model_selection import train_test_split
-from keras.preprocessing.sequence import pad_sequences
-from keras.models import Sequential
-from keras.layers import Dense, LSTM, InputLayer, Bidirectional, TimeDistributed, Embedding, Activation
-from keras.optimizers import Adam
 import keras.utils
+import numpy as np
+from keras import backend as K
+from keras.layers import Dense, LSTM, InputLayer, Bidirectional, TimeDistributed, Embedding, Activation
+from keras.models import Sequential
+from keras.optimizers import Adam
+from keras.preprocessing.sequence import pad_sequences
+
+import preprocessing as prepr
 
 test_size = 0.2
 
@@ -134,22 +135,36 @@ print(train_tags_y[0])
 print(test_tags_y[0])
 
 
+# Custom accuracy that ignores padding
+def ignore_class_accuracy(to_ignore=0):
+    def ignore_accuracy(y_true, y_pred):
+        y_true_class = K.argmax(y_true, axis=-1)
+        y_pred_class = K.argmax(y_pred, axis=-1)
+
+        ignore_mask = K.cast(K.not_equal(y_pred_class, to_ignore), 'int32')
+        matches = K.cast(K.equal(y_true_class, y_pred_class), 'int32') * ignore_mask
+        accuracy = K.sum(matches) / K.maximum(K.sum(ignore_mask), 1)
+        return accuracy
+
+    return ignore_accuracy
+
+
 model = Sequential()
 model.add(InputLayer(input_shape=(MAX_LENGTH,)))
 model.add(Embedding(len(word2index), 128))
-model.add(Bidirectional(LSTM(256, return_sequences=True)))
+model.add(Bidirectional(LSTM(512, return_sequences=True)))
 model.add(TimeDistributed(Dense(len(tag2index))))
 model.add(Activation('softmax'))
 
 model.compile(loss='categorical_crossentropy',
               optimizer=Adam(0.001),
-              metrics=['accuracy'])
+              metrics=['accuracy', ignore_class_accuracy(0)])
 
 model.summary()
 
 
 categorical_tags_y = keras.utils.to_categorical(train_tags_y, len(tag2index))
 
-model.fit(train_sentences_X, keras.utils.to_categorical(train_tags_y, len(tag2index)), batch_size=128, epochs=40, validation_split=0.2)
+model.fit(train_sentences_X, keras.utils.to_categorical(train_tags_y, len(tag2index)), batch_size=128, epochs=50, validation_split=0.2)
 scores = model.evaluate(test_sentences_X, keras.utils.to_categorical(test_tags_y, len(tag2index)))
 print(f"{model.metrics_names[1]}: {scores[1] * 100}")

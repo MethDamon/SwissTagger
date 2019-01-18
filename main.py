@@ -200,7 +200,7 @@ def plot_history(history):
 model = Sequential()
 model.add(InputLayer(input_shape=(MAX_LENGTH,)))
 model.add(Embedding(len(word2index), 128))
-model.add(Bidirectional(LSTM(256, return_sequences=True)))
+model.add(Bidirectional(LSTM(512, return_sequences=True)))
 model.add(TimeDistributed(Dense(len(tag2index))))
 model.add(Activation('softmax'))
 
@@ -213,7 +213,7 @@ model.summary()
 
 categorical_tags_y = keras.utils.to_categorical(train_tags_y, len(tag2index))
 
-history = model.fit(train_sentences_X, keras.utils.to_categorical(train_tags_y, len(tag2index)), batch_size=256,
+history = model.fit(train_sentences_X, keras.utils.to_categorical(train_tags_y, len(tag2index)), batch_size=128,
                     epochs=60, validation_split=0.2)
 scores = model.evaluate(test_sentences_X, keras.utils.to_categorical(test_tags_y, len(tag2index)))
 for i, name in enumerate(model.metrics_names):

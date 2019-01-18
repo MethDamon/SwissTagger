@@ -166,7 +166,7 @@ model.summary()
 categorical_tags_y = keras.utils.to_categorical(train_tags_y, len(tag2index))
 
 history = model.fit(train_sentences_X, keras.utils.to_categorical(train_tags_y, len(tag2index)), batch_size=128,
-                    epochs=1, validation_split=0.2)
+                    epochs=60, validation_split=0.2)
 scores = model.evaluate(test_sentences_X, keras.utils.to_categorical(test_tags_y, len(tag2index)))
 for i, name in enumerate(model.metrics_names):
     print("%s: %s" % (name, 100 * scores[i]))
@@ -205,5 +205,4 @@ predictions = model.predict(test_samples_X)
 
 for idx, sen in enumerate(test_samples):
     print(sen)
-    print('\n')
     print(logits_to_tokens(predictions[idx], {i: t for t, i in tag2index.items()}))

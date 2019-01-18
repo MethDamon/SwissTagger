@@ -211,7 +211,7 @@ categorical_tags_y = keras.utils.to_categorical(train_tags_y, len(tag2index))
 history = model.fit(train_sentences_X, keras.utils.to_categorical(train_tags_y, len(tag2index)), batch_size=128, epochs=10, validation_split=0.2)
 scores = model.evaluate(test_sentences_X, keras.utils.to_categorical(test_tags_y, len(tag2index)))
 for i, name in enumerate(model.metrics_names):
-    print("%s: %s" % name, 100 * scores[i])
+    print("%s: %s" % (name, 100 * scores[i]))
 
 
 plot_history(history)

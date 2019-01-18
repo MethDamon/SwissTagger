@@ -150,9 +150,16 @@ def ignore_class_accuracy(to_ignore=0):
     return ignore_accuracy
 
 model = Sequential()
+
+
 model.add(InputLayer(input_shape=(MAX_LENGTH,)))
 model.add(Embedding(len(word2index), 128))
-model.add(Bidirectional(LSTM(512, return_sequences=True, dropout=0.2, recurrent_dropout=0.2)))
+model.add(Bidirectional(LSTM(512, return_sequences=True,
+                             activity_regularizer=keras.regularizers.l1_l2(0.1, 0.1),
+                             bias_regularizer=keras.regularizers.l1_l2(0.1, 0.1),
+                             kernel_regularizer=keras.regularizers.l1_l2(0.1, 0.1),
+                             recurrent_regularizer=keras.regularizers.l1_l2(0.1, 0.1),
+                             dropout=0.2, recurrent_dropout=0.2)))
 model.add(TimeDistributed(Dense(len(tag2index))))
 model.add(Activation('softmax'))
 

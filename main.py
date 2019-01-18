@@ -149,6 +149,49 @@ def ignore_class_accuracy(to_ignore=0):
     return ignore_accuracy
 
 
+def plot_history(history):
+    loss_list = [s for s in history.history.keys() if 'loss' in s and 'val' not in s]
+    val_loss_list = [s for s in history.history.keys() if 'loss' in s and 'val' in s]
+    acc_list = [s for s in history.history.keys() if 'acc' in s and 'val' not in s]
+    val_acc_list = [s for s in history.history.keys() if 'acc' in s and 'val' in s]
+
+    if len(loss_list) == 0:
+        print('Loss is missing in history')
+        return
+
+        ## As loss always exists
+    epochs = range(1, len(history.history[loss_list[0]]) + 1)
+
+    ## Loss
+    plt.figure(1)
+    for l in loss_list:
+        plt.plot(epochs, history.history[l], 'b',
+                 label='Training loss (' + str(str(format(history.history[l][-1], '.5f')) + ')'))
+    for l in val_loss_list:
+        plt.plot(epochs, history.history[l], 'g',
+                 label='Validation loss (' + str(str(format(history.history[l][-1], '.5f')) + ')'))
+
+    plt.title('Loss')
+    plt.xlabel('Epochs')
+    plt.ylabel('Loss')
+    plt.legend()
+
+    ## Accuracy
+    plt.figure(2)
+    for l in acc_list:
+        plt.plot(epochs, history.history[l], 'b',
+                 label='Training accuracy (' + str(format(history.history[l][-1], '.5f')) + ')')
+    for l in val_acc_list:
+        plt.plot(epochs, history.history[l], 'g',
+                 label='Validation accuracy (' + str(format(history.history[l][-1], '.5f')) + ')')
+
+    plt.title('Accuracy')
+    plt.xlabel('Epochs')
+    plt.ylabel('Accuracy')
+    plt.legend()
+    plt.show()
+
+
 model = Sequential()
 model.add(InputLayer(input_shape=(MAX_LENGTH,)))
 model.add(Embedding(len(word2index), 128))
@@ -165,6 +208,10 @@ model.summary()
 
 categorical_tags_y = keras.utils.to_categorical(train_tags_y, len(tag2index))
 
-model.fit(train_sentences_X, keras.utils.to_categorical(train_tags_y, len(tag2index)), batch_size=128, epochs=50, validation_split=0.2)
+history = model.fit(train_sentences_X, keras.utils.to_categorical(train_tags_y, len(tag2index)), batch_size=128, epochs=50, validation_split=0.2)
 scores = model.evaluate(test_sentences_X, keras.utils.to_categorical(test_tags_y, len(tag2index)))
-print(f"{model.metrics_names[1]}: {scores[1] * 100}")
+for name, i in model.metrics_names:
+    print("%s: %s" % name, 100 * scores[i])
+
+
+plot_history(history)

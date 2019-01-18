@@ -1,7 +1,9 @@
 import keras.utils
+import matplotlib.pyplot as plt
 import numpy as np
 from keras import backend as K
-from keras.layers import Dense, LSTM, InputLayer, Bidirectional, TimeDistributed, Embedding, Activation
+from keras.layers import Dense
+from keras.layers import LSTM, InputLayer, Bidirectional, TimeDistributed, Embedding, Activation
 from keras.models import Sequential
 from keras.optimizers import Adam
 from keras.preprocessing.sequence import pad_sequences
@@ -208,7 +210,7 @@ model.summary()
 
 categorical_tags_y = keras.utils.to_categorical(train_tags_y, len(tag2index))
 
-history = model.fit(train_sentences_X, keras.utils.to_categorical(train_tags_y, len(tag2index)), batch_size=128, epochs=10, validation_split=0.2)
+history = model.fit(train_sentences_X, keras.utils.to_categorical(train_tags_y, len(tag2index)), batch_size=128, epochs=1, validation_split=0.2)
 scores = model.evaluate(test_sentences_X, keras.utils.to_categorical(test_tags_y, len(tag2index)))
 for i, name in enumerate(model.metrics_names):
     print("%s: %s" % (name, 100 * scores[i]))

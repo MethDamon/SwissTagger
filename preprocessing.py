@@ -10,12 +10,12 @@ def select_files_in_folder(directory, ext):
 
 def parse_xml_data():
     articles = []
-    sentences = {}
     for file in select_files_in_folder('data', 'xml'):
         tree = ET.parse(file)
         root = tree.getroot()
         print('READING %s ...' % file)
         for article in root:
+            sentences = {}
             for sentence in article:
                 sentences[sentence.attrib['n']] = {'words': []}
                 for tag in sentence:

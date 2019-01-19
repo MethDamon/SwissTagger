@@ -155,24 +155,11 @@ print(train_tags_y[0])
 print(test_tags_y[0])
 
 
-# Custom accuracy that ignores padding
-def ignore_class_accuracy(to_ignore=0):
-    def ignore_accuracy(y_true, y_pred):
-        y_true_class = K.argmax(y_true, axis=-1)
-        y_pred_class = K.argmax(y_pred, axis=-1)
-
-        ignore_mask = K.cast(K.not_equal(y_pred_class, to_ignore), 'int32')
-        matches = K.cast(K.equal(y_true_class, y_pred_class), 'int32') * ignore_mask
-        accuracy = K.sum(matches) / K.maximum(K.sum(ignore_mask), 1)
-        return accuracy
-
-    return ignore_accuracy
-
 model = Sequential()
 
 
 model.add(InputLayer(input_shape=(MAX_LENGTH,)))
-model.add(Embedding(len(word2index), 128))
+model.add(Embedding(len(word2index), 128, mask_zero=True))
 model.add(Bidirectional(LSTM(512, return_sequences=True,
                              recurrent_regularizer=keras.regularizers.l1_l2(0.1, 0.1),
                              dropout=0.2, recurrent_dropout=0.2)))
@@ -181,7 +168,7 @@ model.add(Activation('softmax'))
 
 model.compile(loss='categorical_crossentropy',
               optimizer=Adam(0.001),
-              metrics=['accuracy', ignore_class_accuracy(0)])
+              metrics=['accuracy'])
 
 model.summary()
 

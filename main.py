@@ -20,6 +20,14 @@ else:
 print("---")
 
 
+# keep results deterministic (results on colab may differ between runtime resets)
+# https://machinelearningmastery.com/reproducible-results-neural-networks-keras/
+from numpy.random import seed
+seed(1)
+from tensorflow import set_random_seed
+set_random_seed(2)
+
+
 test_size = 0.1
 
 data = prepr.parse_xml_data()

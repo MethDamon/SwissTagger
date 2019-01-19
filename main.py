@@ -9,6 +9,17 @@ from keras.preprocessing.sequence import pad_sequences
 
 import preprocessing as prepr
 
+# check whether we're running on CPU/TPU or GPU
+# on colab: change device in 'Runtime' → 'Change runtime type' → 'Hardware accelerator'
+import tensorflow as tf
+device_name = tf.test.gpu_device_name()
+if device_name != '/device:GPU:0':
+    print("Running on CPU or TPU.")
+else:
+    print("Running on GPU.")
+print("---")
+
+
 test_size = 0.1
 
 data = prepr.parse_xml_data()

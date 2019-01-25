@@ -1,5 +1,7 @@
 # SwissTagger
 
+Part-of-speech tagger approaches using neural networks on [NOAH's Corpus](https://noe-eva.github.io/NOAH-Corpus/) of Swiss German data.
+
 ## Downloads
 
 * **Python Notebook**: [SwissTagger.ipynb](SwissTagger.ipynb)  
